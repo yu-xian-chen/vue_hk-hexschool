@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第一週 - 從函式拆解認識設計模式</title>
+      <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+<!--筆記區 :
+練習重點:Vue 初始化(嘗試使用esm，script的type記得要module，解構引入) 、v-for 
+🚩注意&小技巧
+0.將點選的資料放進新的物件 @click="productPanel = item"
+1.項目數量 可在 {{}}裡面直接products.length
+2.不懂為什麼可以連動，詢問助教
+3.清空選取資料的方法 @click="productPanel = {}"
+4.範例更多圖片，父層子層的關係 (寫法需要多看幾次)
+ -->
+<body>
+    <div id="app">
+        <div class="container">
+          <div class="row py-3">
+            <div class="col-md-6">
+              <h2>產品列表</h2>
+              <table class="table table-hover mt-4">
+                <thead>
+                  <tr>
+                    <th width="150">產品名稱</th>
+                    <th width="120">原價</th>
+                    <th width="120">售價</th>
+                    <th width="150">是否啟用</th>
+                    <th width="120">查看細節</th>
+                  </tr>
+                </thead>
+                <tbody>
+        <!--     v-for動態取出products物件裡的東西  :key綁資料的唯一值 -->
+                  <tr v-for="item in products" :key="item.id">
+                    <!-- 名稱 -->
+                    <td width="150">{{item.title}}</td> 
+                    <!-- 原價 -->
+                    <td width="120">{{item.origin_price}}</td>
+                    <!-- 售價 -->
+                    <td width="120">{{item.price}}</td>
+                    <!-- 是否啟用 v-if回傳true/false (1、0) -->
+                    <td width="150">
+                      <span v-if="item.is_enabled" class="text-success">啟用</span>
+                      <span v-else>未啟用</span>
+                    </td>
+                    <!-- 查看細節 按鈕 @click="方法" ，將點擊的item放進productPanel-->
+                    <td width="120">
+                      <button @click="productPanel = item" type="button" class="btn btn-primary">查看細節</button><!-- 🚩0. -->
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p>目前有 <span>{{ products.length }}</span> 項產品</p> <!-- 🚩1.項目數量 -->
+            </div>
+
+            <!-- 商品詳情 -->
+            <div class="col-md-6">
+              <h2>單一產品細節</h2>
+              
+              <template v-if="productPanel.title"> <!-- 🚩2.這裡不太懂為什麼使用v-if="productPanel.title"為真之後，可以帶出下方所有的資料 -->
+                <div class="card mb-3">
+                  <img :src="productPanel.imageUrl" class="card-img-top primary-image" alt="主圖">
+                  <div class="card-body">
+                    <!-- 商品標題與分類 -->
+                    <h5 class="card-title">
+                      {{ productPanel.title }}
+                      <span class="badge bg-primary ms-2">{{ productPanel.category }}</span>
+                    </h5>
+                    <!-- 描述 -->
+                    <p class="card-text">商品描述：{{ productPanel.description }}</p>
+                    <!-- 內容 -->
+                    <p class="card-text">商品內容：{{ productPanel.content }}</p>
+                    <!-- 價錢 -->
+                    <div class="d-flex">
+                      <p class="card-text me-2">{{ productPanel.price }}</p>
+                      <p class="card-text text-secondary"><del>{{productPanel.origin_price  }}</del></p>
+                      元 / {{ productPanel.unit }}
+                    </div>
+                    <button type="button" class="btn btn-primary" @click="productPanel = {}">取消選取</button><!-- 🚩3. -->
+                  </div>
+                </div>
+                <!-- 🚩下方更多圖片 -->
+                <template v-for="(item,key) in productPanel.imagesUrl" :key="key">
+                  <img :src="item" alt="" class="images m-2"><!-- 🚩4.這裡綁item 不是imagesUrl -->
+                </template>
+              </template>
+              <p v-else class="text-secondary">請選擇一個商品查看</p>
+            </div>
+          </div>
+        </div>
+    </div>
+
+<script type="module">
+    import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.26/vue.esm-browser.min.js';
+
+    const app = createApp({
+        data() {
+            return {
+          // 產品資料格式
+                products: [
+                    {
+                        category: "甜甜圈",
+                        content: "尺寸：14x14cm",
+                        description: "濃郁的草莓風味，中心填入滑順不膩口的卡士達內餡，帶來滿滿幸福感！",
+                        id: "-L9tH8jxVb2Ka_DYPwng",
+                        is_enabled: 1,
+                        origin_price: 150,
+                        price: 99,
+                        title: "草莓莓果夾心圈",
+                        unit: "個",
+                        num: 10,
+                        imageUrl: "https://images.unsplash.com/photo-1583182332473-b31ba08929c8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NzR8fGRvbnV0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+                        imagesUrl: [
+                        "https://images.unsplash.com/photo-1626094309830-abbb0c99da4a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2832&q=80",
+                        "https://images.unsplash.com/photo-1559656914-a30970c1affd?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTY0fHxkb251dHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60"
+                        ]
+                    },
+                    {
+                        category: "蛋糕",
+                        content: "尺寸：6寸",
+                        description: "蜜蜂蜜蛋糕，夾層夾上酸酸甜甜的檸檬餡，清爽可口的滋味讓人口水直流！",
+                        id: "-McJ-VvcwfN1_Ye_NtVA",
+                        is_enabled: 16,
+                        origin_price: 1000,
+                        price: 900,
+                        title: "蜂蜜檸檬蛋糕",
+                        unit: "個",
+                        num: 1,
+                        imageUrl: "https://images.unsplash.com/photo-1627834377411-8da5f4f09de8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1001&q=80",
+                        imagesUrl: [
+                        "https://images.unsplash.com/photo-1618888007540-2bdead974bbb?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=987&q=80",
+                        ]
+                    },
+                    {
+                        category: "蛋糕",
+                        content: "尺寸：6寸",
+                        description: "法式煎薄餅加上濃郁可可醬，呈現經典的美味及口感。",
+                        id: "-McJ-VyqaFlLzUMmpPpm",
+                        is_enabled: 1,
+                        origin_price: 700,
+                        price: 600,
+                        title: "暗黑千層",
+                        unit: "個",
+                        num: 15,
+                        imageUrl: "https://images.unsplash.com/photo-1505253149613-112d21d9f6a9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NDZ8fGNha2V8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+                        imagesUrl: [
+                        "https://images.unsplash.com/flagged/photo-1557234985-425e10c9d7f1?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTA5fHxjYWtlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60",
+                        "https://images.unsplash.com/photo-1540337706094-da10342c93d8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NDR8fGNha2V8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60"
+                        ]
+                    }
+                    ],
+                productPanel:{},
+            } 
+        }
+    }).mount('#app')
+</script>
+
+<style>
+    img {
+    object-fit: contain;
+    max-width: 100%;
+    }
+
+    .primary-image {
+    height: 300px;
+    }
+
+    .images {
+    height: 150px;
+    }
+</style>
+</body>
+</html>

@@ -10,6 +10,7 @@
     integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
 </head>
 <!--筆記區 :
+按鍵 @click 參考老師範例
 練習重點:Vue 初始化(嘗試使用esm，script的type記得要module，解構引入) 、v-for 
 🚩注意&小技巧
 0.將點選的資料放進新的物件 @click="productPanel = item"
@@ -62,7 +63,7 @@
             <div class="col-md-6">
               <h2>單一產品細節</h2>
               
-              <template v-if="productPanel.title"> <!-- 🚩2.這裡不太懂為什麼使用v-if="productPanel.title"為真之後，可以帶出下方所有的資料 -->
+              <template v-if="productPanel.title"> <!-- 🚩2.這裡不太懂為什麼使用v-if="productPanel.title"為真之後，可以帶出下方所有的資料 ；如果註解掉，下面的資訊都無法呈現-->
                 <div class="card mb-3">
                   <img :src="productPanel.imageUrl" class="card-img-top primary-image" alt="主圖">
                   <div class="card-body">
